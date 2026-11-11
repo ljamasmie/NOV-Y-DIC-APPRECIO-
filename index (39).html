@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard comercial KAM · Apprecio</title>
+<link rel="icon" href="assets/logo-apprecio.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#FA345E;--brand-dark:#D81E48;--brand-tint:#FFF0F3;--navy:#22223B;
+  --color-fg:#22223B;--color-fg-muted:#6B6B80;--color-bg:#FFFFFF;--color-panel:#FFFFFF;--color-border-line:#ECE7EA;
+  --color-ok:#16A673;--color-warn:#F2A516;--color-bad:#D7263D;
+  --font-anthropic-sans:'Poppins',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --font-anthropic-serif:'Poppins',system-ui,sans-serif;
+  --cds-font-size-caption:12px;--cds-font-size-body:14px;--cds-font-size-heading:17px;--cds-font-size-title:24px;--cds-font-weight-medium:600;
+  --cds-gap-xs:4px;--cds-gap-sm:8px;--cds-gap-md:12px;--cds-gap-lg:20px;--cds-gap-xl:32px;
+  --cds-pad-xs:4px;--cds-pad-sm:8px;--cds-pad-md:12px;--cds-pad-lg:18px;--cds-pad-xl:28px;--cds-radius:12px;
+  --cds-chart-grid:#F1ECEE;--cds-chart-axis:#D9D2D6;--cds-text-secondary:#6B6B80;
+  --cds-surface-popover:#FFFFFF;--cds-border:#ECE7EA;--cds-shadow-popover:0 8px 24px rgba(34,34,59,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;background:#FAF7F8;color:var(--color-fg);font-family:var(--font-anthropic-sans);-webkit-font-smoothing:antialiased}
+.app-top{background:#fff;border-bottom:1px solid var(--color-border-line);position:sticky;top:0;z-index:20}
+.app-top-in{max-width:1400px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.app-top img{height:34px;width:auto;display:block}
+.app-top .sep{width:1px;height:28px;background:var(--color-border-line)}
+.app-top .ttl{font-weight:600;font-size:15px}
+.app-top .al{margin-left:auto;font-size:12px;color:var(--color-fg-muted);background:var(--brand-tint);color:var(--brand-dark);padding:4px 10px;border-radius:999px}
+.app-main{max-width:1400px;margin:0 auto;padding:20px 24px 48px}
+@media (max-width:600px){.app-main{padding:16px 12px 40px}.app-top-in{padding:10px 12px}}
+/* acentos de marca */
+.tb-nav button[aria-selected=true]{color:var(--brand)!important;border-bottom-color:var(--brand)!important}
+.kd-chip[aria-pressed=true],.kd-seg button[aria-pressed=true]{background:var(--brand)!important;border-color:var(--brand)!important;color:#fff!important}
+.kd-kpi{box-shadow:0 1px 2px rgba(34,34,59,.04)}
+.kd-kpi.g{border-top-color:var(--navy)!important}.kd-kpi.r{border-top-color:var(--brand)!important}
+.kd-filters,.kd-card,.kd-kpi,.ls-wrap,.kd-tablewrap{box-shadow:0 1px 2px rgba(34,34,59,.04)}
+.ls-t .tot{color:var(--brand-dark)}
+.ls-sort[aria-sort=descending],.ls-sort[aria-sort=ascending]{color:var(--brand)!important}
+.kd-btn:hover{border-color:var(--brand);color:var(--brand)}
+.kd-head h1,.ls h1{font-weight:600}
+.dash-select{font:inherit;font-size:var(--cds-font-size-body);color:var(--color-fg);background-color:#fff;border:1px solid var(--color-border-line);border-radius:10px;padding:7px 32px 7px 12px;appearance:none;-webkit-appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23FA345E' stroke-width='1.6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.dash-select:focus,.kd-input:focus{outline:2px solid var(--brand-tint);border-color:var(--brand)}
+
+
+.kd{--ok:var(--color-ok);--warn:var(--color-warn);--bad:var(--color-bad);display:flex;flex-direction:column;gap:var(--cds-gap-lg);font-family:var(--font-anthropic-sans);color:var(--color-fg)}
+.kd-head h1{font-family:var(--font-anthropic-serif);font-weight:400;font-size:var(--cds-font-size-title);margin:0 0 var(--cds-gap-xs)}
+.kd-lead{margin:0;color:var(--color-fg-muted);font-size:var(--cds-font-size-body);line-height:1.5}
+.kd-lead b{color:var(--color-fg);font-variant-numeric:tabular-nums}
+.kd-lead .r{color:var(--bad)}.kd-lead .y{color:var(--warn)}
+.kd-filters{display:flex;flex-wrap:wrap;gap:var(--cds-gap-md);align-items:flex-end;padding:var(--cds-pad-md) var(--cds-pad-lg);background:var(--color-panel);border:1px solid var(--color-border-line);border-radius:var(--cds-radius)}
+.kd-f{display:flex;flex-direction:column;gap:4px;min-width:0}
+.kd-f label,.kd-f .lbl{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+.kd-f-kam{flex:1 1 320px}
+.kd-chips{display:flex;flex-wrap:wrap;gap:6px}
+.kd-chip{font:inherit;font-size:var(--cds-font-size-caption);padding:4px 10px;border-radius:999px;border:1px solid var(--color-border-line);background:transparent;color:var(--color-fg);cursor:pointer;font-variant-numeric:tabular-nums}
+.kd-chip[aria-pressed=true]{background:var(--color-fg);color:var(--color-bg);border-color:var(--color-fg)}
+.kd-input{font:inherit;font-size:var(--cds-font-size-body);padding:6px 10px;border:1px solid var(--color-border-line);border-radius:var(--cds-radius);background-color:var(--color-bg);color:var(--color-fg);min-width:200px}
+.kd-btn{font:inherit;font-size:var(--cds-font-size-caption);padding:7px 12px;border-radius:var(--cds-radius);border:1px solid var(--color-border-line);background:transparent;color:var(--color-fg-muted);cursor:pointer}
+.kd-btn:hover{color:var(--color-fg)}
+.kd-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:var(--cds-gap-md)}
+.kd-kpi{background:var(--color-panel);border:1px solid var(--color-border-line);border-radius:var(--cds-radius);padding:var(--cds-pad-lg);display:flex;flex-direction:column;gap:4px;border-top:3px solid var(--color-border-line)}
+.kd-kpi.g{border-top-color:var(--ok)}.kd-kpi.r{border-top-color:var(--bad)}
+.kd-kpi .t{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+.kd-kpi .v{font-family:var(--font-anthropic-serif);font-weight:400;font-size:2.2rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.kd-kpi .s{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted);font-variant-numeric:tabular-nums}
+.kd-up{color:var(--ok)}.kd-down{color:var(--bad)}
+.kd-card{background:var(--color-panel);border:1px solid var(--color-border-line);border-radius:var(--cds-radius);padding:var(--cds-pad-lg)}
+.kd-card-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:var(--cds-gap-sm);margin-bottom:var(--cds-gap-sm)}
+.kd-card-h h2{font-size:var(--cds-font-size-heading);font-weight:var(--cds-font-weight-medium);margin:0}
+.kd-note{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted);margin:0}
+.kd-seg{display:inline-flex;border:1px solid var(--color-border-line);border-radius:999px;overflow:hidden}
+.kd-seg button{font:inherit;font-size:var(--cds-font-size-caption);padding:4px 12px;border:0;background:transparent;color:var(--color-fg-muted);cursor:pointer}
+.kd-seg button[aria-pressed=true]{background:var(--color-fg);color:var(--color-bg)}
+.kd-chart{position:relative;min-height:260px}
+.kd-chart svg text{fill:var(--cds-text-secondary);font-size:var(--cds-font-size-caption);font-family:var(--font-anthropic-sans)}
+.kd-chart .axis path,.kd-chart .axis line{stroke:var(--cds-chart-axis)}
+.kd-chart .grid line{stroke:var(--cds-chart-grid)}
+.kd-tip{position:absolute;pointer-events:none;background:var(--cds-surface-popover);border:1px solid var(--cds-border);box-shadow:var(--cds-shadow-popover);border-radius:var(--cds-radius);padding:8px 10px;font-size:var(--cds-font-size-caption);min-width:150px;z-index:5}
+.kd-tip .row{display:flex;justify-content:space-between;gap:12px;font-variant-numeric:tabular-nums}
+.kd-tip .sw{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px}
+.kd-legend{display:flex;flex-wrap:wrap;gap:var(--cds-gap-md);font-size:var(--cds-font-size-caption);color:var(--color-fg-muted);align-items:center}
+.kd-legend .sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.kd-status{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:var(--cds-gap-sm)}
+.kd-status .kd-chip{display:inline-flex;align-items:center;gap:6px}
+.kd-dot{display:inline-block;width:9px;height:9px;border-radius:50%}
+.kd-dot.verde{background:var(--ok)}.kd-dot.amarillo{background:var(--warn)}.kd-dot.rojo{background:var(--bad)}.kd-dot.gris{background:var(--color-fg-muted);opacity:.5}
+.kd-tablewrap{overflow-x:auto;border:1px solid var(--color-border-line);border-radius:var(--cds-radius)}
+.kd-table{width:100%;border-collapse:collapse;font-size:var(--cds-font-size-caption);font-variant-numeric:tabular-nums}
+.kd-table th{position:sticky;top:0;background:var(--color-panel);text-align:left;font-weight:var(--cds-font-weight-medium);color:var(--color-fg-muted);padding:8px 6px;border-bottom:1px solid var(--color-border-line);white-space:nowrap}
+.kd-table th.mm,.kd-table td.mm{text-align:center;padding:6px 2px;width:26px}
+.kd-table th.sel{color:var(--color-fg);background:color-mix(in srgb,var(--color-fg) 8%,var(--color-panel))}
+.kd-table td{padding:6px;border-bottom:1px solid var(--color-border-line);white-space:nowrap}
+.kd-table td.cli{max-width:230px;overflow:hidden;text-overflow:ellipsis;font-size:var(--cds-font-size-body)}
+.kd-table th.cli,.kd-table td.cli{position:sticky;left:0;background:var(--color-panel);z-index:1}
+.kd-table th.cli{z-index:2}
+.kd-table td.num{text-align:right}
+.kd-table tr.rojo td.cli{box-shadow:inset 3px 0 0 var(--bad)}
+.kd-table tr.amarillo td.cli{box-shadow:inset 3px 0 0 var(--warn)}
+.kd-table tr.verde td.cli{box-shadow:inset 3px 0 0 var(--ok)}
+.kd-table td.mm.sel{background:color-mix(in srgb,var(--color-fg) 6%,transparent)}
+.kd-c{position:relative;display:inline-block;width:14px;height:14px;border-radius:50%;vertical-align:middle;outline:none}
+.kd-c.si{background:var(--ok)}
+.kd-c.perd{border:2px solid var(--bad);box-sizing:border-box}
+.kd-c.no{width:6px;height:6px;background:var(--color-border-line)}
+.kd-c.fut{width:8px;height:2px;border-radius:0;background:var(--color-border-line)}
+.kd-c .tt{display:none;position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:var(--cds-surface-popover);border:1px solid var(--cds-border);box-shadow:var(--cds-shadow-popover);border-radius:var(--cds-radius);padding:6px 8px;white-space:nowrap;color:var(--color-fg);z-index:6;text-align:left;line-height:1.5}
+.kd-c:hover .tt,.kd-c:focus .tt{display:block}
+.kd-pill{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:999px;font-size:var(--cds-font-size-caption)}
+.kd-pill.verde{background:color-mix(in srgb,var(--ok) 16%,transparent)}
+.kd-pill.amarillo{background:color-mix(in srgb,var(--warn) 20%,transparent)}
+.kd-pill.rojo{background:color-mix(in srgb,var(--bad) 16%,transparent)}
+.kd-pill.gris{background:color-mix(in srgb,var(--color-fg-muted) 14%,transparent);color:var(--color-fg-muted)}
+.kd-sub{color:var(--color-fg-muted)}
+.kd-more{display:flex;justify-content:center;gap:var(--cds-gap-md);align-items:center;padding-top:var(--cds-gap-sm)}
+.kd-sort{display:flex;gap:var(--cds-gap-sm);align-items:center;font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+[data-dash-source-state=refreshing]{opacity:.5}
+.kd details{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+.kd details li{margin:3px 0}
+
+.ls{display:flex;flex-direction:column;gap:var(--cds-gap-md);font-family:var(--font-anthropic-sans);color:var(--color-fg)}
+.ls h1{font-family:var(--font-anthropic-serif);font-weight:400;font-size:var(--cds-font-size-title);margin:0}
+.ls-lead{margin:0;color:var(--color-fg-muted);font-size:var(--cds-font-size-body)}
+.ls-lead b{color:var(--color-fg);font-variant-numeric:tabular-nums}
+.ls-bar{display:flex;flex-wrap:wrap;gap:var(--cds-gap-sm);align-items:center;font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+.ls-wrap{overflow-x:auto;border:1px solid var(--color-border-line);border-radius:var(--cds-radius)}
+.ls-t{width:100%;border-collapse:collapse;font-size:var(--cds-font-size-body);font-variant-numeric:tabular-nums}
+.ls-t th{position:sticky;top:0;background:var(--color-panel);text-align:left;font-size:var(--cds-font-size-caption);font-weight:var(--cds-font-weight-medium);color:var(--color-fg-muted);padding:10px 12px;border-bottom:1px solid var(--color-border-line);white-space:nowrap}
+.ls-t td{padding:8px 12px;border-bottom:1px solid var(--color-border-line);white-space:nowrap}
+.ls-t .n{text-align:right}
+.ls-t .tot{font-weight:var(--cds-font-weight-medium)}
+.ls-t .pos{color:var(--color-fg-muted);width:36px}
+.ls-t .cero{color:var(--color-fg-muted)}
+.ls-t tbody tr:hover td{background:color-mix(in srgb,var(--color-fg) 4%,transparent)}
+.ls-sort{cursor:pointer;user-select:none}
+.ls-sort:hover{color:var(--color-fg)}
+.ls-sort::after{content:" ↕";opacity:.35}
+.ls-sort[aria-sort=descending]::after{content:" ▼";opacity:1}
+.ls-sort[aria-sort=ascending]::after{content:" ▲";opacity:1}
+.ls-sort[aria-sort=descending],.ls-sort[aria-sort=ascending]{color:var(--color-fg)}
+[data-dash-source-state=refreshing]{opacity:.5}
+
+.tb-nav{display:flex;gap:4px;border-bottom:1px solid var(--color-border-line);margin-bottom:var(--cds-gap-lg);font-family:var(--font-anthropic-sans)}
+.tb-nav button{font:inherit;font-size:var(--cds-font-size-body);padding:8px 14px;border:0;border-bottom:2px solid transparent;background:transparent;color:var(--color-fg-muted);cursor:pointer;margin-bottom:-1px}
+.tb-nav button[aria-selected=true]{color:var(--color-fg);border-bottom-color:var(--color-fg);font-weight:var(--cds-font-weight-medium)}
+
+</style>
+<script src="vendor/d3.min.js"></script>
+<script src="data/compras.js"></script>
+<script>
+// Mini-runtime: reemplaza la API "dash" del dashboard de Claude para que la página funcione sola.
+window.dash = (() => {
+  const DEF = {kams:'', anio:'', mes:'', cliente:'', vista:'todos', orden:'prioridad', metrica:'clientes', kam:'', orden_lista:'total_2025:desc'};
+  let params = {...DEF};
+  const sources = {compras: window.COMPRAS || []};
+  const calcs = {}, cache = {}, draws = new Map(), onDatas = [], made = new WeakMap();
+  const data = (id) => {
+    if (sources[id]) return {status: 'ok', data: sources[id], columns: Object.keys(sources[id][0] || {})};
+    const c = calcs[id];
+    if (!c) return {status: 'missing', data: []};
+    if (!(id in cache)) cache[id] = c.fn(...c.inputs.map((i) => data(i).data));
+    return {status: 'ok', data: cache[id]};
+  };
+  let pend = false;
+  const render = () => {
+    onDatas.forEach((f) => f());
+    for (const [name, d] of draws) document.querySelectorAll('[data-draw="' + name + '"]').forEach((el) => run(el, d));
+  };
+  const run = (el, d) => {
+    if (el.closest('[hidden]')) return;
+    if (typeof d === 'function') return d(el);
+    if (!made.has(el)) made.set(el, d.mount ? d.mount(el) : undefined);
+    d.update && d.update(el, made.get(el));
+  };
+  const schedule = () => { if (pend) return; pend = true; requestAnimationFrame(() => { pend = false; render(); }); };
+  window.addEventListener('resize', schedule);
+  return {
+    data, colors: ['#C9C6D3', '#22223B', '#FA345E', '#F2A516', '#16A673'],
+    calc: (id, o) => { calcs[id] = o; },
+    loader: () => {},
+    draw: (name, d) => { if (d === undefined) { const x = draws.get(name); if (x) document.querySelectorAll('[data-draw="' + name + '"]').forEach((el) => run(el, x)); return; } draws.set(name, d); },
+    onData: (f) => { onDatas.push(f); },
+    params: () => params,
+    setParams: (o) => { for (const k in o) params[k] = o[k] === null || o[k] === undefined ? DEF[k] ?? '' : o[k]; render(); },
+    resetParams: () => { params = {...DEF}; render(); },
+    setLink: (n) => { try { history.replaceState(null, '', '#' + n); } catch (e) {} },
+    refresh: () => {},
+    _render: render
+  };
+})();
+</script>
+</head>
+<body>
+<header class="app-top"><div class="app-top-in">
+  <img src="assets/logo-apprecio.png" alt="Apprecio">
+  <span class="sep"></span>
+  <span class="ttl">Gestión comercial KAM</span>
+  <span class="al" id="datos-al">Datos al —</span>
+</div></header>
+<main class="app-main">
+<nav class="tb-nav" role="tablist" aria-label="Vistas">
+  <button type="button" role="tab" class="tb-btn" data-tab="dashboard" aria-selected="true">Dashboard comercial</button>
+  <button type="button" role="tab" class="tb-btn" data-tab="lista-nov-dic" aria-selected="false">Lista nov–dic 2025</button>
+</nav>
+
+<section class="tb-panel" id="dashboard">
+<div class="kd" lang="es">
+  <header class="kd-head" id="resumen">
+    <h1>Gestión comercial KAM · Compras por cliente</h1>
+    <p class="kd-lead"><b class="r dash-skeleton" data-draw="h-perdidos" data-source="estado" data-field="estado">—</b> clientes compraron en <span data-draw="h-anioant">—</span> y aún no compran en <span data-draw="h-anio">—</span>. En total, <b class="r" data-draw="h-rojo" data-source="estado" data-field="color">—</b> requieren contacto o reactivación y <b class="y" data-draw="h-amarillo" data-source="estado" data-field="color">—</b> están en riesgo. Estado calculado al cierre de <span data-draw="h-corte">—</span>.</p>
+  </header>
+
+  <section class="kd-filters" id="filtros" aria-label="Filtros">
+    <div class="kd-f kd-f-kam">
+      <span class="lbl">KAM (uno o varios)</span>
+      <div class="kd-chips" data-draw="f-kam" data-source="estado"></div>
+    </div>
+    <div class="kd-f">
+      <label for="kd-anio">Año</label>
+      <select id="kd-anio" class="dash-select" data-draw="f-anio" data-source="estado" aria-label="Año"></select>
+    </div>
+    <div class="kd-f">
+      <label for="kd-mes">Mes</label>
+      <select id="kd-mes" class="dash-select kd-mes" aria-label="Mes">
+        <option value="">Último mes con datos</option>
+        <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
+        <option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
+        <option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
+        <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+      </select>
+    </div>
+    <div class="kd-f">
+      <label for="kd-cli">Cliente</label>
+      <input id="kd-cli" class="kd-input kd-cli" type="search" list="kd-cli-list" placeholder="Buscar cliente…" autocomplete="off">
+      <datalist id="kd-cli-list" data-draw="f-cli" data-source="estado"></datalist>
+    </div>
+    <button type="button" class="kd-btn kd-reset">Limpiar filtros</button>
+  </section>
+
+  <section class="kd-kpis" id="kpis" aria-label="Indicadores">
+    <div class="kd-kpi g" id="kpi-mes">
+      <span class="t">Clientes con compra en <span data-draw="k-mes-lbl">—</span></span>
+      <span class="v dash-skeleton" data-draw="k-mes" data-source="estado" data-field="cliente">—</span>
+      <span class="s" data-draw="k-mes-d">—</span>
+    </div>
+    <div class="kd-kpi g" id="kpi-anio">
+      <span class="t">Clientes con compra en el año <span data-draw="k-anio-lbl">—</span></span>
+      <span class="v dash-skeleton" data-draw="k-anio" data-source="estado" data-field="meses">—</span>
+      <span class="s" data-draw="k-anio-d">—</span>
+    </div>
+    <div class="kd-kpi r" id="kpi-sin">
+      <span class="t">Compraron el año anterior y no este año</span>
+      <span class="v dash-skeleton" data-draw="k-sin" data-source="estado" data-field="estado">—</span>
+      <span class="s" data-draw="k-sin-d">—</span>
+    </div>
+    <div class="kd-kpi r" id="kpi-dejo">
+      <span class="t">Dejaron de comprar (eran recurrentes)</span>
+      <span class="v dash-skeleton" data-draw="k-dejo" data-source="estado" data-field="estado">—</span>
+      <span class="s" data-draw="k-dejo-d">—</span>
+    </div>
+  </section>
+
+  <section class="kd-card" id="comparativa">
+    <div class="kd-card-h">
+      <h2>Clientes con compra por mes, comparado por año</h2>
+      <div class="kd-seg" role="group" aria-label="Métrica del gráfico">
+        <button type="button" class="kd-met" data-met="clientes" aria-pressed="true">N° clientes</button>
+        <button type="button" class="kd-met" data-met="monto" aria-pressed="false">Monto neto</button>
+      </div>
+    </div>
+    <div class="kd-legend" data-draw="g-leyenda" data-source="compras"></div>
+    <div class="kd-chart" data-draw="grafico" data-source="compras"></div>
+    <p class="kd-note">Toca un mes del gráfico para filtrarlo. El mes en curso aparece atenuado porque aún no cierra. <span data-draw="g-bajo">—</span></p>
+  </section>
+
+  <section class="kd-card" id="clientes">
+    <div class="kd-card-h">
+      <h2>Clientes · compras mes a mes en <span data-draw="t-anio">—</span></h2>
+      <div class="kd-sort">
+        <label for="kd-orden">Ordenar</label>
+        <select id="kd-orden" class="dash-select kd-orden" aria-label="Ordenar tabla">
+          <option value="prioridad">Prioridad de contacto</option>
+          <option value="monto_ant">Mayor compra año anterior</option>
+          <option value="monto">Mayor compra este año</option>
+          <option value="nombre">Nombre</option>
+        </select>
+      </div>
+    </div>
+    <div class="kd-status" role="group" aria-label="Filtrar por estado">
+      <button type="button" class="kd-chip kd-vista" data-vista="todos" aria-pressed="true">Todos <span data-draw="n-todos">—</span></button>
+      <button type="button" class="kd-chip kd-vista" data-vista="rojo" aria-pressed="false"><span class="kd-dot rojo"></span>Contactar / reactivar <span data-draw="n-rojo">—</span></button>
+      <button type="button" class="kd-chip kd-vista" data-vista="amarillo" aria-pressed="false"><span class="kd-dot amarillo"></span>En riesgo <span data-draw="n-amarillo">—</span></button>
+      <button type="button" class="kd-chip kd-vista" data-vista="verde" aria-pressed="false"><span class="kd-dot verde"></span>Activos <span data-draw="n-verde">—</span></button>
+      <button type="button" class="kd-chip kd-vista" data-vista="gris" aria-pressed="false"><span class="kd-dot gris"></span>Inactivos +1 año <span data-draw="n-gris">—</span></button>
+    </div>
+    <div class="kd-legend" style="margin-bottom:var(--cds-gap-sm)">
+      <span><span class="kd-c si" style="width:10px;height:10px"></span> Compró en el mes</span>
+      <span><span class="kd-c perd" style="width:10px;height:10px"></span> Compró ese mes el año anterior, este año no</span>
+      <span><span class="kd-c no"></span> Sin compra</span>
+    </div>
+    <div class="kd-tablewrap">
+      <table class="kd-table" data-source="estado" data-row-key="cliente,anio">
+        <thead><tr>
+          <th class="cli" data-field="cliente">Cliente</th>
+          <th data-field="kam">KAM</th>
+          <th class="mm" data-field="m1" data-m="1">Ene</th><th class="mm" data-field="m2" data-m="2">Feb</th><th class="mm" data-field="m3" data-m="3">Mar</th>
+          <th class="mm" data-field="m4" data-m="4">Abr</th><th class="mm" data-field="m5" data-m="5">May</th><th class="mm" data-field="m6" data-m="6">Jun</th>
+          <th class="mm" data-field="m7" data-m="7">Jul</th><th class="mm" data-field="m8" data-m="8">Ago</th><th class="mm" data-field="m9" data-m="9">Sep</th>
+          <th class="mm" data-field="m10" data-m="10">Oct</th><th class="mm" data-field="m11" data-m="11">Nov</th><th class="mm" data-field="m12" data-m="12">Dic</th>
+          <th data-field="ultimo_mes">Último mes</th>
+          <th data-field="ultimo_anio">Último año</th>
+          <th class="num" data-field="meses">Meses con compra</th>
+          <th class="num" data-field="monto">Monto neto año</th>
+          <th data-field="estado">Estado comercial</th>
+        </tr></thead>
+        <tbody data-draw="tabla" data-fetchpriority="low"></tbody>
+      </table>
+    </div>
+    <div class="kd-more">
+      <span class="kd-note" data-draw="t-cuenta">—</span>
+      <button type="button" class="kd-btn kd-mas">Mostrar 50 más</button>
+      <button type="button" class="kd-btn kd-todo">Mostrar todos</button>
+    </div>
+  </section>
+
+  <details id="definiciones">
+    <summary>Cómo se calcula cada estado</summary>
+    <ul>
+      <li><b>Compra en un mes</b>: monto neto del mes mayor a cero (facturas y notas de cobro menos notas de crédito).</li>
+      <li><b>Corte</b>: el estado se calcula al último mes con datos del año seleccionado (diciembre en años cerrados; en el año en curso, el mes actual aunque no haya cerrado).</li>
+      <li><span class="kd-dot rojo"></span> <b>Compró año anterior, no este año</b>: tuvo compras el año anterior y ninguna en el año seleccionado.</li>
+      <li><span class="kd-dot rojo"></span> <b>Dejó de comprar</b>: compró en 4 o más de los 12 meses previos a su última compra y lleva 3 o más meses sin comprar.</li>
+      <li><span class="kd-dot amarillo"></span> <b>N meses sin compra</b>: lleva 2 o más meses sin comprar (sin ser recurrente).</li>
+      <li><span class="kd-dot amarillo"></span> <b>Frecuencia a la baja</b>: sigue comprando, pero en el año lleva al menos 2 meses con compra menos que en el mismo período del año anterior (y 30% menos o más).</li>
+      <li><span class="kd-dot verde"></span> <b>Volvió a comprar</b>: compró en los últimos 3 meses después de 3 o más meses sin compras.</li>
+      <li><span class="kd-dot verde"></span> <b>Cliente nuevo</b>: su primera compra es del año seleccionado.</li>
+      <li><span class="kd-dot verde"></span> <b>Activo recurrente</b>: compró en 6 o más de los últimos 12 meses. <b>Activo</b>: compró este mes o el anterior.</li>
+      <li><span class="kd-dot gris"></span> <b>Inactivo +1 año</b>: no compra ni este año ni el anterior.</li>
+      <li><b>KAM</b>: el KAM de la última factura del cliente (cartera actual). El cliente se agrupa por la columna «Cliente» de la hoja CUADRATURAS.</li>
+    </ul>
+  </details>
+</div>
+</section>
+
+<section class="tb-panel" id="lista-nov-dic" hidden>
+<div class="ls" lang="es">
+  <h1 id="titulo">Compras noviembre y diciembre 2025 por empresa</h1>
+  <p class="ls-lead"><b data-draw="r-n" data-source="totales" data-field="empresas" data-row="0">—</b> empresas compraron <b data-draw="r-tot" data-source="totales" data-field="total_2025" data-row="0">—</b> en nov–dic 2025 (noviembre <b data-draw="r-nov" data-source="totales" data-field="nov_2025" data-row="0">—</b>, diciembre <b data-draw="r-dic" data-source="totales" data-field="dic_2025" data-row="0">—</b>). En noviembre 2026, hasta el día 10, esas empresas llevan <b data-draw="r-nov26" data-source="totales" data-field="nov_2026" data-row="0">—</b>.</p>
+  <div class="ls-bar">
+    <label for="ls-kam">KAM</label>
+    <select id="ls-kam" class="dash-select" data-draw="f-kam-lista" data-source="lista" aria-label="KAM"></select>
+    <span>· Haz clic en el encabezado de un monto para ordenar de mayor a menor (otro clic invierte).</span>
+  </div>
+  <div class="ls-wrap">
+    <table class="ls-t" id="lista" data-source="lista" data-row-key="cliente">
+      <thead><tr>
+        <th class="pos">#</th>
+        <th data-field="cliente">Empresa</th>
+        <th data-field="kam">KAM</th>
+        <th class="n ls-sort" data-field="nov_2025" data-sort="nov_2025" tabindex="0" aria-sort="none">Nov 2025</th>
+        <th class="n ls-sort" data-field="dic_2025" data-sort="dic_2025" tabindex="0" aria-sort="none">Dic 2025</th>
+        <th class="n ls-sort" data-field="total_2025" data-sort="total_2025" tabindex="0" aria-sort="none">Total nov + dic 2025</th>
+        <th class="n ls-sort" data-field="nov_2026" data-sort="nov_2026" tabindex="0" aria-sort="none">Nov 2026 (al día 10)</th>
+      </tr></thead>
+      <tbody data-draw="tabla-lista"></tbody>
+    </table>
+  </div>
+</div>
+</section>
+
+<script>
+dash.calc('estado', {
+  title: 'Estado comercial por cliente y año',
+  description: 'Una fila por cliente y año: compras de cada mes, comparación con el año anterior y estado comercial (verde, amarillo, rojo).',
+  inputs: ['compras'],
+  fn: (compras) => {
+  const MES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  const idx = (a, m) => a * 12 + (m - 1);
+  const porCliente = new Map();
+  let maxIdx = 0;
+  const anios = new Set();
+  for (const r of compras) {
+    const a = Number(r.anio), m = Number(r.mes), monto = Number(r.monto) || 0;
+    anios.add(a);
+    if (!porCliente.has(r.cliente)) porCliente.set(r.cliente, {kam: r.kam, montos: new Map()});
+    const c = porCliente.get(r.cliente);
+    const i = idx(a, m);
+    c.montos.set(i, (c.montos.get(i) || 0) + monto);
+    if (i > maxIdx) maxIdx = i;
+  }
+  const out = [];
+  for (const anio of [...anios].sort()) {
+    // Mes de corte: último mes con datos del año (dic. para años cerrados)
+    const corte = Math.min(idx(anio, 12), maxIdx);
+    const mesCorte = corte - anio * 12 + 1;
+    for (const [cliente, c] of porCliente) {
+      const compro = (i) => (c.montos.get(i) || 0) > 0;
+      const hist = [...c.montos.keys()].filter((i) => i <= corte && compro(i)).sort((x, y) => x - y);
+      if (!hist.length) continue;
+      const ult = hist[hist.length - 1];
+      const gap = corte - ult;
+      const cuenta = (desde, hasta) => hist.filter((i) => i >= desde && i <= hasta).length;
+      const mesesAnio = cuenta(idx(anio, 1), corte);
+      const mesesAntMismoPeriodo = cuenta(idx(anio - 1, 1), idx(anio - 1, mesCorte));
+      const mesesAntTotal = cuenta(idx(anio - 1, 1), idx(anio - 1, 12));
+      const ult12 = cuenta(corte - 11, corte);
+      const regularAntes = cuenta(ult - 11, ult) >= 4;
+      const recientes = hist.filter((i) => i >= corte - 2);
+      let previa = null;
+      if (recientes.length) {
+        const antes = hist.filter((i) => i < recientes[0]);
+        previa = antes.length ? antes[antes.length - 1] : null;
+      }
+      let estado, color;
+      if (ult < idx(anio - 1, 1)) { estado = 'Inactivo +1 año'; color = 'gris'; }
+      else if (mesesAnio === 0 && mesesAntTotal > 0) { estado = 'Compró año anterior, no este año'; color = 'rojo'; }
+      else if (gap >= 3 && regularAntes) { estado = 'Dejó de comprar'; color = 'rojo'; }
+      else if (gap >= 2) { estado = gap + ' meses sin compra'; color = 'amarillo'; }
+      else if (previa !== null && recientes[0] - previa >= 4) { estado = 'Volvió a comprar'; color = 'verde'; }
+      else if (previa === null && hist[0] >= idx(anio, 1)) { estado = 'Cliente nuevo'; color = 'verde'; }
+      else if (mesesAntMismoPeriodo >= 3 && mesesAnio <= mesesAntMismoPeriodo * 0.7 && mesesAnio < mesesAntMismoPeriodo - 1) { estado = 'Frecuencia a la baja'; color = 'amarillo'; }
+      else if (ult12 >= 6) { estado = 'Activo recurrente'; color = 'verde'; }
+      else { estado = 'Activo'; color = 'verde'; }
+      const row = {cliente, anio, kam: c.kam, estado, color,
+        ultimo_mes: MES[ult % 12], ultimo_anio: Math.floor(ult / 12), meses_sin_compra: gap,
+        meses: mesesAnio, meses_ant: mesesAntMismoPeriodo, mes_corte: mesCorte,
+        monto: 0, monto_ant: 0};
+      for (let m = 1; m <= 12; m++) {
+        const v = c.montos.get(idx(anio, m)) || 0, w = c.montos.get(idx(anio - 1, m)) || 0;
+        row['m' + m] = v; row['p' + m] = w;
+        if (m <= mesCorte) { row.monto += v; row.monto_ant += w; }
+      }
+      out.push(row);
+    }
+  }
+  return out;
+}
+});
+
+window.KD = (() => {
+  const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const MES3 = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  const nf = new Intl.NumberFormat('es-CL');
+  const clp = (v) => {
+    const a = Math.abs(v), s = v < 0 ? '-' : '';
+    if (a >= 1e6) return s + '$' + (a / 1e6).toLocaleString('es-CL', {maximumFractionDigits: a >= 1e8 ? 0 : 1}) + ' M';
+    if (a >= 1e3) return s + '$' + Math.round(a / 1e3).toLocaleString('es-CL') + ' mil';
+    return s + '$' + nf.format(Math.round(a));
+  };
+  const PRI = {'Compró año anterior, no este año': 0, 'Dejó de comprar': 1, 'Frecuencia a la baja': 3};
+  const prioridad = (r) => r.color === 'rojo' ? (PRI[r.estado] ?? 2) : r.color === 'amarillo' ? (PRI[r.estado] ?? 4) : r.color === 'verde' ? 6 : 8;
+  const p = () => dash.params();
+  const kams = () => String(p().kams || '').split(',').filter(Boolean);
+  const est = () => { const d = dash.data('estado'); return d.status === 'ok' && Array.isArray(d.data) ? d.data : null; };
+  const anios = () => { const e = est(); return e ? [...new Set(e.map((r) => r.anio))].sort() : []; };
+  const anio = () => { const a = anios(); const v = Number(p().anio); return a.includes(v) ? v : a[a.length - 1]; };
+  const corte = () => { const e = est(); const a = anio(); const r = e && e.find((x) => x.anio === a); return r ? r.mes_corte : 12; };
+  const mes = () => { const v = Number(p().mes); return v >= 1 && v <= 12 ? v : corte(); };
+  const pasaCliente = (nombre) => { const q = String(p().cliente || '').trim().toLowerCase(); return !q || String(nombre).toLowerCase().includes(q); };
+  const pasaKam = (k) => { const ks = kams(); return !ks.length || ks.includes(k); };
+  const filas = () => { const e = est(); if (!e) return null; const a = anio(); return e.filter((r) => r.anio === a && pasaKam(r.kam) && pasaCliente(r.cliente)); };
+  const ui = {limite: 50};
+  return {MESES, MES3, nf, clp, prioridad, p, kams, est, anios, anio, corte, mes, filas, pasaCliente, pasaKam, ui};
+})();
+</script>
+
+<script>
+// Filtros: sólo escuchan y fijan valores
+(() => {
+  const K = window.KD;
+  document.querySelectorAll('.kd-mes').forEach((el) => el.addEventListener('change', () => dash.setParams({mes: el.value || null})));
+  let t;
+  document.querySelectorAll('.kd-cli').forEach((el) => el.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => { K.ui.limite = 50; dash.setParams({cliente: el.value || null}); }, 250); }));
+  document.querySelectorAll('.kd-reset').forEach((el) => el.addEventListener('click', () => { K.ui.limite = 50; dash.setParams({kams: null, anio: null, mes: null, cliente: null, vista: 'todos', orden: 'prioridad', metrica: 'clientes'}); }));
+  document.querySelectorAll('.kd-met').forEach((el) => el.addEventListener('click', () => dash.setParams({metrica: el.dataset.met})));
+  document.querySelectorAll('.kd-vista').forEach((el) => el.addEventListener('click', () => { K.ui.limite = 50; dash.setParams({vista: el.dataset.vista}); }));
+  document.querySelectorAll('.kd-orden').forEach((el) => el.addEventListener('change', () => dash.setParams({orden: el.value})));
+  document.querySelectorAll('.kd-mas').forEach((el) => el.addEventListener('click', () => { K.ui.limite += 50; dash.draw('tabla'); dash.draw('t-cuenta'); }));
+  document.querySelectorAll('.kd-todo').forEach((el) => el.addEventListener('click', () => { K.ui.limite = 1e6; dash.draw('tabla'); dash.draw('t-cuenta'); }));
+  dash.onData(() => {
+    const P = K.p();
+    document.querySelectorAll('.kd-mes').forEach((el) => { el.value = P.mes ? String(P.mes) : ''; });
+    document.querySelectorAll('.kd-cli').forEach((el) => { if (document.activeElement !== el) el.value = P.cliente || ''; });
+    document.querySelectorAll('.kd-orden').forEach((el) => { el.value = P.orden || 'prioridad'; });
+    document.querySelectorAll('.kd-met').forEach((el) => el.setAttribute('aria-pressed', String((P.metrica || 'clientes') === el.dataset.met)));
+    document.querySelectorAll('.kd-vista').forEach((el) => el.setAttribute('aria-pressed', String((P.vista || 'todos') === el.dataset.vista)));
+    const m = K.est() ? K.mes() : 0;
+    document.querySelectorAll('.kd-table th.mm').forEach((th) => th.classList.toggle('sel', Number(th.dataset.m) === m));
+  });
+})();
+
+(() => {
+  const K = window.KD;
+  const txt = (name, f) => dash.draw(name, (el) => {
+    const e = K.est();
+    if (!e) { el.textContent = '—'; return; }
+    el.classList.remove('dash-skeleton');
+    const v = f(el);
+    if (v !== undefined) el.textContent = v;
+  });
+
+  // Filtro KAM (chips multi-selección)
+  dash.draw('f-kam', (el) => {
+    const e = K.est(); el.replaceChildren();
+    if (!e) return;
+    const a = K.anio();
+    const cnt = d3.rollup(e.filter((r) => r.anio === a && r.color !== 'gris'), (v) => v.length, (r) => r.kam);
+    const todos = [...new Set(e.map((r) => r.kam))].sort((x, y) => (cnt.get(y) || 0) - (cnt.get(x) || 0) || x.localeCompare(y));
+    const sel = K.kams();
+    const mk = (label, pressed, on) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'kd-chip'; b.textContent = label; b.setAttribute('aria-pressed', String(pressed)); b.addEventListener('click', on); el.appendChild(b); };
+    mk('Todos', !sel.length, () => { K.ui.limite = 50; dash.setParams({kams: null}); });
+    todos.forEach((k) => mk(k + ' · ' + (cnt.get(k) || 0), sel.includes(k), () => {
+      const s = new Set(K.kams()); s.has(k) ? s.delete(k) : s.add(k);
+      K.ui.limite = 50; dash.setParams({kams: [...s].join(',') || null});
+    }));
+  });
+
+  dash.draw('f-anio', (sel) => {
+    const a = K.anios();
+    sel.replaceChildren(...a.slice().reverse().map((y) => new Option(String(y), String(y))));
+    if (a.length) sel.value = String(K.anio());
+    sel.onchange = () => { K.ui.limite = 50; dash.setParams({anio: Number(sel.value)}); };
+  });
+
+  dash.draw('f-cli', (dl) => {
+    const e = K.est(); if (!e) { dl.replaceChildren(); return; }
+    const a = K.anio();
+    const n = [...new Set(e.filter((r) => r.anio === a && K.pasaKam(r.kam)).map((r) => r.cliente))].sort((x, y) => x.localeCompare(y));
+    dl.replaceChildren(...n.map((c) => { const o = document.createElement('option'); o.value = c; return o; }));
+  });
+
+  // Resumen
+  const rows = () => K.filas() || [];
+  txt('h-perdidos', () => K.nf.format(rows().filter((r) => r.estado === 'Compró año anterior, no este año').length));
+  txt('h-anioant', () => String(K.anio() - 1));
+  txt('h-anio', () => String(K.anio()));
+  txt('h-rojo', () => K.nf.format(rows().filter((r) => r.color === 'rojo').length));
+  txt('h-amarillo', () => K.nf.format(rows().filter((r) => r.color === 'amarillo').length));
+  txt('h-corte', () => K.MESES[K.corte() - 1].toLowerCase() + ' ' + K.anio());
+
+  // KPIs
+  const delta = (el, cur, prev, label) => {
+    el.replaceChildren();
+    const d = cur - prev;
+    const s = document.createElement('span');
+    s.className = d > 0 ? 'kd-up' : d < 0 ? 'kd-down' : '';
+    s.textContent = (d > 0 ? '▲ +' : d < 0 ? '▼ ' : '= ') + K.nf.format(d);
+    el.append(s, ' vs ' + label + ' (' + K.nf.format(prev) + ')');
+  };
+  txt('k-mes-lbl', () => K.MESES[K.mes() - 1].toLowerCase() + ' ' + K.anio());
+  txt('k-mes', () => K.nf.format(rows().filter((r) => r['m' + K.mes()] > 0).length));
+  txt('k-mes-d', (el) => { const m = K.mes(); delta(el, rows().filter((r) => r['m' + m] > 0).length, rows().filter((r) => r['p' + m] > 0).length, K.MES3[m - 1] + ' ' + (K.anio() - 1)); });
+  txt('k-anio-lbl', () => '(ene–' + K.MES3[K.corte() - 1] + ' ' + K.anio() + ')');
+  txt('k-anio', () => K.nf.format(rows().filter((r) => r.meses > 0).length));
+  txt('k-anio-d', (el) => delta(el, rows().filter((r) => r.meses > 0).length, rows().filter((r) => r.meses_ant > 0).length, 'mismo período ' + (K.anio() - 1)));
+  txt('k-sin', () => K.nf.format(rows().filter((r) => r.estado === 'Compró año anterior, no este año').length));
+  txt('k-sin-d', () => { const r = rows().filter((x) => x.estado === 'Compró año anterior, no este año'); return K.clp(d3.sum(r, (x) => x.monto_ant)) + ' comprados en ' + (K.anio() - 1) + ' (mismo período)'; });
+  txt('k-dejo', () => K.nf.format(rows().filter((r) => r.estado === 'Dejó de comprar').length));
+  txt('k-dejo-d', () => 'Compraban 4+ meses al año y llevan 3+ meses sin comprar');
+
+  // Conteos por estado
+  ['rojo', 'amarillo', 'verde', 'gris'].forEach((c) => txt('n-' + c, () => K.nf.format(rows().filter((r) => r.color === c).length)));
+  txt('n-todos', () => K.nf.format(rows().length));
+  txt('t-anio', () => String(K.anio()));
+
+  const vista = () => {
+    const v = K.p().vista || 'todos', o = K.p().orden || 'prioridad';
+    const r = rows().filter((x) => v === 'todos' || x.color === v);
+    const by = {
+      prioridad: (a, b) => K.prioridad(a) - K.prioridad(b) || b.monto_ant - a.monto_ant || b.monto - a.monto,
+      monto_ant: (a, b) => b.monto_ant - a.monto_ant,
+      monto: (a, b) => b.monto - a.monto,
+      nombre: (a, b) => a.cliente.localeCompare(b.cliente)
+    }[o] || ((a, b) => 0);
+    return r.sort(by);
+  };
+  txt('t-cuenta', () => { const n = vista().length; return 'Mostrando ' + K.nf.format(Math.min(n, K.ui.limite)) + ' de ' + K.nf.format(n) + ' clientes'; });
+
+  // Tabla principal
+  dash.draw('tabla', (tb) => {
+    tb.replaceChildren();
+    if (!K.est()) return;
+    const corte = K.corte(), a = K.anio(), msel = K.mes();
+    const list = vista().slice(0, K.ui.limite);
+    const frag = document.createDocumentFragment();
+    for (const r of list) {
+      const tr = document.createElement('tr');
+      tr.className = r.color;
+      tr.dataset.key = encodeURIComponent(r.cliente) + ',' + encodeURIComponent(String(r.anio));
+      const td = (cls, text) => { const c = document.createElement('td'); if (cls) c.className = cls; if (text !== undefined) c.textContent = text; tr.appendChild(c); return c; };
+      td('cli', r.cliente).title = r.cliente;
+      td('', r.kam);
+      for (let m = 1; m <= 12; m++) {
+        const c = td('mm' + (m === msel ? ' sel' : ''));
+        const v = r['m' + m], w = r['p' + m];
+        const s = document.createElement('span');
+        s.className = 'kd-c ' + (m > corte ? 'fut' : v > 0 ? 'si' : w > 0 ? 'perd' : 'no');
+        if (m <= corte && (v || w)) {
+          s.tabIndex = 0;
+          const tt = document.createElement('span'); tt.className = 'tt';
+          const l1 = document.createElement('div'); l1.textContent = K.MES3[m - 1] + ' ' + a + ': ' + (v ? K.clp(v) : 'sin compra');
+          const l2 = document.createElement('div'); l2.className = 'kd-sub'; l2.textContent = K.MES3[m - 1] + ' ' + (a - 1) + ': ' + (w ? K.clp(w) : 'sin compra');
+          tt.append(l1, l2); s.appendChild(tt);
+        }
+        c.appendChild(s);
+      }
+      td('', r.ultimo_mes);
+      td('', String(r.ultimo_anio));
+      const cm = td('num', String(r.meses));
+      if (r.meses_ant) { const sm = document.createElement('span'); sm.className = 'kd-sub'; sm.textContent = ' / ' + r.meses_ant; cm.appendChild(sm); }
+      cm.title = 'Meses con compra en ' + a + ' / mismo período ' + (a - 1);
+      td('num', K.clp(r.monto));
+      const ce = td('');
+      const pill = document.createElement('span'); pill.className = 'kd-pill ' + r.color;
+      const dot = document.createElement('span'); dot.className = 'kd-dot ' + r.color;
+      pill.append(dot, r.estado); ce.appendChild(pill);
+      frag.appendChild(tr);
+    }
+    tb.appendChild(frag);
+  });
+
+  // Gráfico comparativo
+  const serie = () => {
+    const d = dash.data('compras');
+    if (d.status !== 'ok') return null;
+    const met = K.p().metrica === 'monto' ? 'monto' : 'clientes';
+    const rs = d.data.filter((r) => K.pasaKam(r.kam) && K.pasaCliente(r.cliente));
+    const years = [...new Set(d.data.map((r) => Number(r.anio)))].sort();
+    let maxI = 0; d.data.forEach((r) => { const i = Number(r.anio) * 12 + Number(r.mes); if (i > maxI) maxI = i; });
+    const vals = new Map();
+    for (const r of rs) {
+      const k = r.anio + '-' + r.mes, mo = Number(r.monto) || 0;
+      if (!vals.has(k)) vals.set(k, {clientes: 0, monto: 0});
+      const o = vals.get(k); o.monto += mo; if (mo > 0) o.clientes += 1;
+    }
+    const pts = [];
+    for (const y of years) for (let m = 1; m <= 12; m++) {
+      const i = y * 12 + m; if (i > maxI) continue;
+      const o = vals.get(y + '-' + m) || {clientes: 0, monto: 0};
+      pts.push({anio: y, mes: m, v: o[met], clientes: o.clientes, monto: o.monto, parcial: i === maxI});
+    }
+    return {years, pts, met};
+  };
+  const yColor = (years, y) => dash.colors[years.indexOf(y) % dash.colors.length];
+
+  dash.draw('g-leyenda', (el) => {
+    el.replaceChildren(); const s = serie(); if (!s) return;
+    s.years.forEach((y) => { const sp = document.createElement('span'); const sw = document.createElement('span'); sw.className = 'sw'; sw.style.background = yColor(s.years, y); sp.append(sw, String(y)); el.appendChild(sp); });
+  });
+
+  dash.draw('g-bajo', (el) => {
+    const s = serie(); if (!s) { el.textContent = '—'; return; }
+    const a = K.anio();
+    const c = s.pts.filter((p) => p.anio === a && !p.parcial);
+    if (!c.length) { el.textContent = ''; return; }
+    const lo = c.reduce((x, y) => (y.v < x.v ? y : x));
+    el.textContent = 'Mes con menos actividad en ' + a + ': ' + K.MESES[lo.mes - 1].toLowerCase() + ' (' + (s.met === 'monto' ? K.clp(lo.v) : K.nf.format(lo.v) + ' clientes') + ').';
+  });
+
+  dash.draw('grafico', {
+    mount(el) {
+      el.replaceChildren();
+      const svg = d3.select(el).append('svg').attr('width', '100%').attr('role', 'img');
+      const tip = d3.select(el).append('div').attr('class', 'kd-tip').style('display', 'none');
+      return {svg, tip};
+    },
+    update(el, {svg, tip}) {
+      const s = serie();
+      svg.selectAll('*').remove();
+      if (!s) { const d = dash.data('compras'); if (d.status === 'error') svg.attr('height', 40).append('text').attr('x', 0).attr('y', 20).text('No se pudo cargar'); return; }
+      const W = Math.max(300, el.clientWidth), H = 260;
+      const fmt = s.met === 'monto' ? K.clp : (v) => K.nf.format(v);
+      const ymax = d3.max(s.pts, (p) => p.v) || 1;
+      const y = d3.scaleLinear().domain([0, ymax]).nice().range([H - 26, 14]);
+      const ticks = y.ticks(5);
+      const tmp = svg.append('text').text(fmt(ticks[ticks.length - 1]));
+      const ml = Math.ceil(tmp.node().getComputedTextLength() || 40) + 10; tmp.remove();
+      const x = d3.scaleBand().domain(d3.range(1, 13)).range([ml, W - 4]).paddingInner(0.22).paddingOuter(0.05);
+      const xi = d3.scaleBand().domain(s.years).range([0, x.bandwidth()]).padding(0.08);
+      svg.attr('viewBox', `0 0 ${W} ${H}`).attr('height', H)
+        .attr('aria-label', 'Barras agrupadas por mes: ' + (s.met === 'monto' ? 'monto neto' : 'clientes con compra') + ' en ' + s.years.join(', '));
+      const msel = K.mes(), a = K.anio();
+      svg.append('rect').attr('x', x(msel) - 3).attr('width', x.bandwidth() + 6).attr('y', 6).attr('height', H - 32)
+        .attr('rx', 4).style('fill', 'var(--color-fg)').style('opacity', 0.06);
+      svg.append('g').attr('class', 'grid').selectAll('line').data(ticks).join('line')
+        .attr('x1', ml).attr('x2', W - 4).attr('y1', (d) => y(d)).attr('y2', (d) => y(d));
+      svg.append('g').selectAll('text').data(ticks).join('text').attr('x', ml - 6).attr('y', (d) => y(d) + 4).attr('text-anchor', 'end').text(fmt);
+      const showAll = x.bandwidth() > 70;
+      svg.append('g').selectAll('text').data(d3.range(1, 13)).join('text')
+        .attr('x', (m) => x(m) + x.bandwidth() / 2).attr('y', H - 8).attr('text-anchor', 'middle')
+        .style('font-weight', (m) => (m === msel ? 600 : null))
+        .text((m) => (x.bandwidth() < 22 ? K.MES3[m - 1][0].toUpperCase() : K.MES3[m - 1]));
+      svg.append('g').selectAll('rect').data(s.pts).join('rect')
+        .attr('x', (p) => x(p.mes) + xi(p.anio)).attr('width', xi.bandwidth())
+        .attr('y', (p) => y(p.v)).attr('height', (p) => Math.max(0, y(0) - y(p.v))).attr('rx', 1.5)
+        .style('fill', (p) => yColor(s.years, p.anio)).style('opacity', (p) => (p.parcial ? 0.35 : 1));
+      if (xi.bandwidth() >= 16 || showAll) {
+        svg.append('g').selectAll('text').data(s.pts.filter((p) => p.anio === a)).join('text')
+          .attr('x', (p) => x(p.mes) + xi(p.anio) + xi.bandwidth() / 2).attr('y', (p) => y(p.v) - 4)
+          .attr('text-anchor', 'middle').style('font-size', '10px').text((p) => (s.met === 'monto' ? K.clp(p.v).replace(' M', 'M') : p.v));
+      }
+      const byM = d3.group(s.pts, (p) => p.mes);
+      svg.append('g').selectAll('rect').data(d3.range(1, 13)).join('rect')
+        .attr('x', (m) => x(m) - x.step() * x.paddingInner() / 2).attr('width', x.step()).attr('y', 0).attr('height', H)
+        .style('fill', 'transparent').style('cursor', 'pointer')
+        .on('mousemove', (ev, m) => {
+          const items = byM.get(m) || [];
+          tip.style('display', 'block').selectAll('*').remove();
+          tip.append('div').style('font-weight', 600).style('margin-bottom', '4px').text(K.MESES[m - 1]);
+          items.forEach((p) => {
+            const r = tip.append('div').attr('class', 'row');
+            const l = r.append('span'); l.append('span').attr('class', 'sw').style('background', yColor(s.years, p.anio)); l.append('span').text(p.anio + (p.parcial ? ' (en curso)' : ''));
+            r.append('span').text(K.nf.format(p.clientes) + ' cl. · ' + K.clp(p.monto));
+          });
+          const [px, py] = d3.pointer(ev, el);
+          const tw = tip.node().offsetWidth;
+          tip.style('left', Math.min(Math.max(0, px + 12), el.clientWidth - tw) + 'px').style('top', Math.max(0, py - 70) + 'px');
+        })
+        .on('mouseleave', () => tip.style('display', 'none'))
+        .on('click', (ev, m) => dash.setParams({mes: String(m)}));
+    }
+  });
+})();
+</script>
+
+<script>
+const filas = (compras) => {
+  const m = new Map();
+  for (const r of compras) {
+    const a = Number(r.anio), mes = Number(r.mes), v = Number(r.monto) || 0;
+    const k = (a === 2025 && mes === 11) ? 'nov_2025' : (a === 2025 && mes === 12) ? 'dic_2025' : (a === 2026 && mes === 11) ? 'nov_2026' : null;
+    if (!k) continue;
+    if (!m.has(r.cliente)) m.set(r.cliente, {cliente: r.cliente, kam: r.kam, nov_2025: 0, dic_2025: 0, total_2025: 0, nov_2026: 0});
+    m.get(r.cliente)[k] += v;
+  }
+  return [...m.values()].map((x) => ({...x, total_2025: x.nov_2025 + x.dic_2025}))
+    .filter((x) => x.nov_2025 > 0 || x.dic_2025 > 0)
+    .sort((x, y) => y.total_2025 - x.total_2025);
+};
+dash.calc('lista', {
+  title: 'Compras nov–dic 2025 por empresa',
+  description: 'Monto neto por empresa en noviembre y diciembre 2025, ordenado de mayor a menor, con noviembre 2026 para comparar.',
+  inputs: ['compras'],
+  fn: filas
+});
+dash.calc('totales', {
+  title: 'Totales nov–dic 2025',
+  description: 'Suma de la lista de empresas: cantidad y montos de nov 2025, dic 2025 y nov 2026.',
+  inputs: ['lista'],
+  fn: (lista) => [{
+    empresas: lista.length,
+    nov_2025: lista.reduce((s, x) => s + x.nov_2025, 0),
+    dic_2025: lista.reduce((s, x) => s + x.dic_2025, 0),
+    total_2025: lista.reduce((s, x) => s + x.total_2025, 0),
+    nov_2026: lista.reduce((s, x) => s + x.nov_2026, 0)
+  }]
+});
+
+(() => {
+  const nf = new Intl.NumberFormat('es-CL');
+  const clp = (v) => (v < 0 ? '-$' : '$') + nf.format(Math.abs(Math.round(v)));
+  const kam = () => String(dash.params().kam || '');
+  const lista = () => { const d = dash.data('lista'); return d.status === 'ok' && Array.isArray(d.data) ? d.data : null; };
+  const COLS = ['nov_2025', 'dic_2025', 'total_2025', 'nov_2026'];
+  const orden = () => { const o = String(dash.params().orden_lista || 'total_2025:desc').split(':'); return {col: COLS.includes(o[0]) ? o[0] : 'total_2025', dir: o[1] === 'asc' ? 'asc' : 'desc'}; };
+  const visibles = () => {
+    const l = lista(); if (!l) return null;
+    const k = kam(), o = orden();
+    const r = k ? l.filter((x) => x.kam === k) : l.slice();
+    return r.sort((a, b) => (o.dir === 'asc' ? a[o.col] - b[o.col] : b[o.col] - a[o.col]));
+  };
+  const ordenar = (col) => { const o = orden(); dash.setParams({orden_lista: col + ':' + (o.col === col && o.dir === 'desc' ? 'asc' : 'desc')}); };
+  document.querySelectorAll('.ls-sort').forEach((th) => {
+    th.addEventListener('click', () => ordenar(th.dataset.sort));
+    th.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); ordenar(th.dataset.sort); } });
+  });
+  dash.onData(() => {
+    const o = orden();
+    document.querySelectorAll('.ls-sort').forEach((th) => th.setAttribute('aria-sort', th.dataset.sort === o.col ? (o.dir === 'desc' ? 'descending' : 'ascending') : 'none'));
+  });
+
+  const resumen = (name, f) => dash.draw(name, (el) => {
+    const l = visibles();
+    if (!l) { el.textContent = '—'; return; }
+    el.textContent = f(l);
+  });
+  const sum = (l, c) => l.reduce((s, x) => s + x[c], 0);
+  resumen('r-n', (l) => nf.format(l.length));
+  resumen('r-tot', (l) => clp(sum(l, 'total_2025')));
+  resumen('r-nov', (l) => clp(sum(l, 'nov_2025')));
+  resumen('r-dic', (l) => clp(sum(l, 'dic_2025')));
+  resumen('r-nov26', (l) => clp(sum(l, 'nov_2026')));
+
+  dash.draw('f-kam-lista', (sel) => {
+    const l = lista() || [];
+    const ks = [...new Set(l.map((x) => x.kam))].sort();
+    sel.replaceChildren(new Option('Todos', ''), ...ks.map((k) => new Option(k, k)));
+    sel.value = kam();
+    sel.onchange = () => dash.setParams({kam: sel.value || null});
+  });
+
+  dash.draw('tabla-lista', (tb) => {
+    tb.replaceChildren();
+    const l = visibles();
+    if (!l) return;
+    l.forEach((x, i) => {
+      const tr = document.createElement('tr');
+      tr.dataset.key = encodeURIComponent(x.cliente);
+      const td = (text, cls) => { const c = document.createElement('td'); c.textContent = text; if (cls) c.className = cls; tr.appendChild(c); };
+      td(String(i + 1), 'pos');
+      td(x.cliente);
+      td(x.kam);
+      td(clp(x.nov_2025), 'n' + (x.nov_2025 ? '' : ' cero'));
+      td(clp(x.dic_2025), 'n' + (x.dic_2025 ? '' : ' cero'));
+      td(clp(x.total_2025), 'n tot');
+      td(clp(x.nov_2026), 'n' + (x.nov_2026 ? '' : ' cero'));
+      tb.appendChild(tr);
+    });
+  });
+})();
+</script>
+
+<script>
+(() => {
+  const abrir = (id) => {
+    document.querySelectorAll('.tb-panel').forEach((s) => { s.hidden = s.id !== id; });
+    document.querySelectorAll('.tb-btn').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === id)));
+  };
+  document.querySelectorAll('.tb-btn').forEach((b) => b.addEventListener('click', () => { abrir(b.dataset.tab); dash.setLink(b.dataset.tab); dash._render(); }));
+  const h = (location.hash || '').slice(1);
+  if (h === 'lista-nov-dic' || h === 'dashboard') abrir(h);
+})();
+</script>
+
+<script>
+(() => {
+  const el = document.getElementById('datos-al');
+  if (el && window.DATOS_AL) { const [y, m, d] = window.DATOS_AL.split('-'); el.textContent = 'Datos al ' + d + '-' + m + '-' + y; }
+  dash._render();
+})();
+</script>
+</main>
+</body>
+</html>
